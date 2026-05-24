@@ -35,3 +35,16 @@ AList 多云存储全自动定时增量对撞同步脚本 (支持动态跨年跨
    ```bash
    curl -O [https://raw.githubusercontent.com/M1nato-art/alist-cloud-sync/main/sync.sh](https://raw.githubusercontent.com/M1nato-art/alist-cloud-sync/main/sync.sh)
    chmod +x sync.sh
+
+2.编辑 sync.sh，将你的 AList Token、源路径、目标路径填入核心参数配置区域。
+
+3.打开 Linux 系统自带的计划任务编辑器：
+
+Bash
+crontab -e
+
+4.在最底部添加一行，设置每天凌晨 3:00 全自动执行：
+
+Bash
+0 3 * * * /bin/bash /path/to/sync.sh
+(注意：请将 /path/to/sync.sh 修改为你脚本存放的真实绝对路径)
