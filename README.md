@@ -44,7 +44,36 @@ Bash
 crontab -e
 
 4.在最底部添加一行，设置每天凌晨 3:00 全自动执行：
-
 Bash
 0 3 * * * /bin/bash /path/to/sync.sh
 (注意：请将 /path/to/sync.sh 修改为你脚本存放的真实绝对路径)
+
+
+方法 B：极致极简 crontab 一枪通电流 ⚡
+如果你懒得在服务器里单独塞个 .sh 文件，可以直接利用 crontab 的原生注入。
+直接 crontab -e 并把下面这一整行塞到最底部即可：
+
+Bash
+0 3 * * * curl -X POST "[http://127.0.0.1:5244/api/fs/copy](http://127.0.0.1:5244/api/fs/copy)" -H "Authorization: 你的AListToken" -H "Content-Type: application/json" -d '{"src_dir": "/Cloudflare-R2/img", "dst_dir": "/google-drive/google/图床", "names": ["'$(date +\%Y)'"]}' >> /tmp/alist_sync.log 2>&1
+⚠️ Crontab 踩坑神仙提醒：
+在 crontab 底层环境中，百分号 % 属于特殊终止符。如果是写在 crontab 一行流里，必须写成 \%Y（带反斜杠转义）；如果是写在独立的 .sh 脚本里，则保持标准的 %Y。本项目已双重优化，完美闭环此大坑！
+
+📊 日志审计与排错
+任务执行后，你可以随时去查看同步状态：
+
+Bash
+cat /tmp/alist_sync.log
+完美通电的响应示例：
+
+Plaintext
+[2026-05-23 03:00:00] 🚀 开始多云对撞同步任务...
+[2026-05-23 03:00:00] 📅 目标同步年份目录: 2026
+[2026-05-23 03:00:01] 🎯 AList 核心响应: {"code":200,"message":"success","data":null}
+返回 code: 200 即代表传输指令已成功下发至 AList 后台中转执行！
+
+🤝 贡献与鸣谢
+欢迎各位极客老哥提交 Issue 或 PR。
+
+📄 许可证
+本项目基于 MIT License 协议开源。
+
